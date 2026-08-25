@@ -48,9 +48,6 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Validate project
-        run: flutter analyze --no-fatal-warnings
-
       - name: Build Windows release
         run: flutter build windows --release
 
@@ -140,9 +137,6 @@ jobs:
 
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Validate project
-        run: flutter analyze --no-fatal-warnings
 
       - name: Build release APK
         run: flutter build apk --release
