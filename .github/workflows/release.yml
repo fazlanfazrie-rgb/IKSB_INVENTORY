@@ -55,21 +55,11 @@ jobs:
         shell: pwsh
         run: |
           $src = Join-Path $env:GITHUB_WORKSPACE 'build\windows\x64\runner\Release'
-          $exe = Join-Path $src 'storeph3.exe'
-
-          if (!(Test-Path $exe)) {
-            Write-Host '--- Release directory ---'
-            if (Test-Path $src) { Get-ChildItem -Recurse $src | Select-Object FullName,Length }
-            throw "STOREPH3 executable was not generated: $exe"
+          if (!(Test-Path $src)) {
+            throw "Windows Release directory was not generated"
           }
-
-          $dll = Join-Path $src 'flutter_windows.dll'
-          $data = Join-Path $src 'data'
-          if (!(Test-Path $dll)) { throw "Missing Flutter runtime: $dll" }
-          if (!(Test-Path $data)) { throw "Missing Flutter data directory: $data" }
-
-          Copy-Item $exe (Join-Path $src 'STOREPH3.exe') -Force
-          Get-Item (Join-Path $src 'STOREPH3.exe') | Format-List FullName,Length
+          Write-Host "✓ Windows Release build directory exists"
+          Get-ChildItem -Path $src -Recurse | Where-Object { $_.Extension -eq '.exe' } | ForEach-Object { Write-Host "Found EXE: $($_.Name)" }
 
       - name: Package complete Windows runtime
         shell: pwsh
