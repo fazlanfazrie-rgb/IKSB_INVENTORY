@@ -1,0 +1,20 @@
+name: storeph3
+publish_to: 'none'
+version: 3.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  sqflite: ^2.4.3
+  sqflite_common_ffi: ^2.4.2+1
+  path: ^1.9.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/items.json
+    - assets/data/transactions.json

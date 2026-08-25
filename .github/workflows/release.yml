@@ -1,0 +1,162 @@
+name: STOREPH3 Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: storeph3-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_CHANNEL: stable
+  APP_NAME: STOREPH3
+
+jobs:
+  windows:
+    name: Build STOREPH3 Windows x64
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Verify Flutter toolchain
+        shell: pwsh
+        run: |
+          flutter --version
+          flutter doctor -v
+          flutter config --enable-windows-desktop
+          flutter devices
+
+      - name: Generate Windows platform files
+        shell: pwsh
+        run: flutter create . --platforms=windows --project-name storeph3
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Validate project
+        run: flutter analyze --no-fatal-warnings
+
+      - name: Build Windows release
+        run: flutter build windows --release
+
+      - name: Verify Windows package
+        shell: pwsh
+        run: |
+          $src = Join-Path $env:GITHUB_WORKSPACE 'build\windows\x64\runner\Release'
+          $exe = Join-Path $src 'storeph3.exe'
+
+          if (!(Test-Path $exe)) {
+            Write-Host '--- Release directory ---'
+            if (Test-Path $src) { Get-ChildItem -Recurse $src | Select-Object FullName,Length }
+            throw "STOREPH3 executable was not generated: $exe"
+          }
+
+          $dll = Join-Path $src 'flutter_windows.dll'
+          $data = Join-Path $src 'data'
+          if (!(Test-Path $dll)) { throw "Missing Flutter runtime: $dll" }
+          if (!(Test-Path $data)) { throw "Missing Flutter data directory: $data" }
+
+          Copy-Item $exe (Join-Path $src 'STOREPH3.exe') -Force
+          Get-Item (Join-Path $src 'STOREPH3.exe') | Format-List FullName,Length
+
+      - name: Package complete Windows runtime
+        shell: pwsh
+        run: |
+          $src = 'build\windows\x64\runner\Release'
+          $pkg = 'STOREPH3-Windows-x64'
+          $zip = 'STOREPH3-Windows-x64.zip'
+
+          if (Test-Path $pkg) { Remove-Item $pkg -Recurse -Force }
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+
+          New-Item -ItemType Directory -Force -Path $pkg | Out-Null
+          Copy-Item -Path "$src\*" -Destination $pkg -Recurse -Force
+
+          Compress-Archive -Path "$pkg\*" -DestinationPath $zip -CompressionLevel Optimal
+
+          if (!(Test-Path $zip)) { throw "Windows package was not created" }
+          Get-Item $zip | Format-List FullName,Length
+
+      - name: Upload Windows runtime artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: STOREPH3-Windows-x64
+          path: STOREPH3-Windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Windows EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: STOREPH3-EXE
+          path: build/windows/x64/runner/Release/STOREPH3.exe
+          if-no-files-found: error
+          retention-days: 30
+
+  android:
+    name: Build STOREPH3 Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Verify Flutter toolchain
+        run: |
+          flutter --version
+          flutter doctor -v
+          flutter config --enable-android
+
+      - name: Generate Android platform files
+        run: flutter create . --platforms=android --project-name storeph3
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Validate project
+        run: flutter analyze --no-fatal-warnings
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Verify APK
+        run: |
+          test -f build/app/outputs/flutter-apk/app-release.apk
+          cp build/app/outputs/flutter-apk/app-release.apk STOREPH3.apk
+          ls -lh STOREPH3.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: STOREPH3-APK
+          path: STOREPH3.apk
+          if-no-files-found: error
+          retention-days: 30

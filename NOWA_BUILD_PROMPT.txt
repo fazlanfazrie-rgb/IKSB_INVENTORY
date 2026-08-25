@@ -1,0 +1,48 @@
+Build STOREPH3 as a production-grade offline-first Store Management System from this Flutter project.
+
+DO NOT redesign the inventory business rules from scratch.
+DO NOT use WebView.
+DO NOT use Excel as the runtime database.
+DO NOT replace SQLite with a cloud database for core transactions.
+
+Preserve:
+- Item Master and transaction seed data already bundled in assets/data.
+- Ledger-first stock balance calculation: opening + receive - issue.
+- New transaction validation: item required; document number required; non-negative quantities; exactly one movement type; Issue cannot exceed current balance.
+- Stock Take and Audit Log tables.
+- 50 blank legacy transaction rows must remain excluded.
+- Historical negative-balance exceptions must not be silently deleted or rewritten.
+
+Create these native Flutter screens:
+1. Dashboard
+2. Item Master
+3. Stock Balance
+4. Bin Card
+5. Receive
+6. Issue
+7. Adjustment
+8. Stock Take
+9. Reports
+10. Audit Log
+11. Users & Roles
+12. Backup / Restore
+
+UX:
+- Mobile-first responsive layout.
+- Storekeeper-friendly large controls.
+- Fast item search by code/name.
+- Barcode-ready item lookup architecture.
+- Clear success/error messages.
+- No destructive action without confirmation.
+
+Offline:
+- All core inventory operations must work with no internet connection.
+- SQLite is the source of truth.
+- Add backup/restore of the SQLite database.
+- Prepare sync metadata (device_id, created_at, updated_at, local_id) without requiring a server.
+
+Release names:
+- Android: STOREPH3.apk
+- Windows: STOREPH3.exe
+
+Before release, run smoke tests for receive, issue-blocking, bin-card running balance, stock take variance, audit logging, restart persistence, and backup/restore.
