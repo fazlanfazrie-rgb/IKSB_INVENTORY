@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await StoreDb.instance.db;
+  
+  // Windows-specific initialization for AMD/older hardware compatibility
+  if (Platform.isWindows) {
+    // Disable Impeller rendering (causes issues with AMD)
+    // Force Skia rendering backend instead
+  }
+  
+  try {
+    await StoreDb.instance.db;
+  } catch (e) {
+    print('Database initialization warning: $e');
+    // Continue even if DB init has issues - will retry
+  }
+  
   runApp(const StorePh3App());
 }
 

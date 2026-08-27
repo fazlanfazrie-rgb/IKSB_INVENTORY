@@ -18,12 +18,24 @@ class StoreDb {
     }
     final dir = await getDatabasesPath();
     final path = join(dir, 'storeph3.db');
-    _db = await openDatabase(path, version: 3, onCreate: (db, _) async {
-      await _schema(db);
-      await _seed(db);
-    }, onUpgrade: (db, oldVersion, newVersion) async {
-      await _schema(db);
-    });
+    _db = await openDatabase(
+      path,
+      version: 3,
+      singleInstance: true,
+      onCreate: (db, _) async {
+        await _schema(db);
+        await _seed(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        await _schema(db);
+      },
+      onOpen: (db) async {
+        // Disable Foreign Keys and enable WAL mode for better Windows compatibility
+        await db.execute('PRAGMA foreign_keys = OFF');
+        await db.execute('PRAGMA journal_mode = WAL');
+        await db.execute('PRAGMA synchronous = NORMAL');
+      },
+    );
     return _db!;
   }
 
