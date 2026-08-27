@@ -18,6 +18,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create --platforms=android,windows --project-name storeph3 .
+      - run: rm -f test/widget_test.dart
       - run: flutter pub get
       - run: dart format lib test
       - run: flutter analyze
@@ -34,7 +35,9 @@ jobs:
           channel: stable
           cache: true
       - run: flutter create --platforms=android --project-name storeph3 .
+      - run: rm -f test/widget_test.dart
       - run: flutter pub get
+      - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
@@ -54,7 +57,9 @@ jobs:
           cache: true
       - run: flutter config --enable-windows-desktop
       - run: flutter create --platforms=windows --project-name storeph3 .
+      - run: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
       - run: flutter pub get
+      - run: flutter analyze
       - run: flutter test
       - run: flutter build windows --release
       - uses: actions/upload-artifact@v4
