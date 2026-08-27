@@ -5,6 +5,7 @@ on:
     branches: [main, phase6-flutter-golden]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   golden:
@@ -16,9 +17,11 @@ jobs:
         with:
           channel: stable
           cache: true
+      - run: flutter create --platforms=android,windows --project-name storeph3 .
       - run: flutter pub get
+      - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze
-      - run: flutter test test/golden_engine_test.dart
+      - run: flutter test
 
   android:
     name: Android Build
@@ -30,7 +33,7 @@ jobs:
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android .
+      - run: flutter create --platforms=android --project-name storeph3 .
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk --release
@@ -50,7 +53,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter config --enable-windows-desktop
-      - run: flutter create --platforms=windows .
+      - run: flutter create --platforms=windows --project-name storeph3 .
       - run: flutter pub get
       - run: flutter test
       - run: flutter build windows --release
