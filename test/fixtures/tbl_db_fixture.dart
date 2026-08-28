@@ -2,7 +2,7 @@ import 'package:storeph3/core/inventory_engine.dart';
 import 'package:storeph3/core/transaction_engine.dart';
 
 /// Small deterministic TBL_DB fixture representing the Excel ledger rules.
-const tblDbFixture = <InventoryRow>[
+final tblDbFixture = <InventoryRow>[
   InventoryRow(
     date: DateTime(2026, 8, 1),
     itemCode: 'ITEM-A',
