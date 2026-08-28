@@ -49,7 +49,10 @@ class MasterParityHarness {
       final id = keys.isEmpty ? '$i' : keys.map((k) => '${r[k] ?? ''}').join('|');
       var unique = id;
       var n = 2;
-      while (out.containsKey(unique)) unique = '$id|#$n++';
+      while (out.containsKey(unique)) {
+        unique = '$id|#$n';
+        n++;
+      }
       out[unique] = r;
     }
     return out;
