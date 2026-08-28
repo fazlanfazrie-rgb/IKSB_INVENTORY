@@ -1,0 +1,60 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:storeph3/core/inventory_engine.dart';
+import 'package:storeph3/core/parity_harness.dart';
+import 'package:storeph3/core/stock_take_engine.dart';
+
+import 'fixtures/tbl_db_fixture.dart';
+
+void main() {
+  test('TBL_DB fixture produces Excel-order running balances', () {
+    final rows = orderedFixture();
+    final balances = InventoryEngine.runningBalances(rows);
+
+    expect(balances, [100, 500, 550, 530, 600, 525, 495]);
+  });
+
+  test('Balance Engine closing stock matches fixture oracle per item', () {
+    final rows = orderedFixture();
+    final itemA = rows.where((r) => r.itemCode == 'ITEM-A');
+    final itemB = rows.where((r) => r.itemCode == 'ITEM-B');
+
+    expect(InventoryEngine.closingBalance(itemA), 100);
+    expect(InventoryEngine.closingBalance(itemB), 525);
+  });
+
+  test('Stock Take variance and status are deterministic', () {
+    final tally = StockTakeEngine.calculate(system: 100, physical: 100);
+    final over = StockTakeEngine.calculate(system: 525, physical: 530);
+    final short = StockTakeEngine.calculate(system: 100, physical: 95);
+
+    expect(tally.variance, 0);
+    expect(tally.status, 'TALLY');
+    expect(over.variance, 5);
+    expect(over.status, 'OVER');
+    expect(short.variance, -5);
+    expect(short.status, 'SHORT');
+  });
+
+  test('Master Parity Harness returns PASS for matching Excel oracle', () {
+    const expected = [
+      {'ITEM CODE': 'ITEM-A', 'BALANCE': 100.0, 'STATUS': 'TALLY'},
+      {'ITEM CODE': 'ITEM-B', 'BALANCE': 525.0, 'STATUS': 'TALLY'},
+    ];
+    const actual = [
+      {'ITEM CODE': 'ITEM-A', 'BALANCE': 100.0, 'STATUS': 'TALLY'},
+      {'ITEM CODE': 'ITEM-B', 'BALANCE': 525.0, 'STATUS': 'TALLY'},
+    ];
+
+    final result = MasterParityHarness.compare(
+      engine: 'TBL_DB → Balance → Stock Take',
+      expected: expected,
+      actual: actual,
+      keys: ['ITEM CODE'],
+    );
+
+    expect(result.status, ParityStatus.pass);
+    expect(result.mismatches, isEmpty);
+    expect(result.expectedRows, 2);
+    expect(result.actualRows, 2);
+  });
+}
