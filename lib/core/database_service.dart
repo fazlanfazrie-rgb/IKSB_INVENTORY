@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'db_inventory_mapper.dart';
+import 'inventory_engine.dart';
+
 class DatabaseService {
   static Database? _database;
 
@@ -45,28 +48,43 @@ class DatabaseService {
             FOREIGN KEY(item_code) REFERENCES items(item_code)
           )
         ''');
-        await db.execute(
-          'CREATE INDEX idx_transactions_item_date ON transactions(item_code, date)',
-        );
-        await db.execute(
-          'CREATE INDEX idx_transactions_tranx ON transactions(tranx)',
-        );
+        await db.execute('CREATE INDEX idx_transactions_item_date ON transactions(item_code, date)');
+        await db.execute('CREATE INDEX idx_transactions_tranx ON transactions(tranx)');
       },
     );
     return _database!;
   }
 
+  /// Inventory is now calculated through the same normalized Balance Engine
+  /// contract used by the parity tests, rather than a separate SQL formula.
   static Future<List<Map<String, Object?>>> inventory() async {
     final db = await database;
-    return db.rawQuery('''
-      SELECT i.item_code, i.item_name, i.uom,
-        COALESCE(SUM(t.opening + t.receive - t.issue), 0) AS balance
-      FROM items i
-      LEFT JOIN transactions t ON t.item_code = i.item_code
-      WHERE i.active = 1
-      GROUP BY i.item_code, i.item_name, i.uom
-      ORDER BY i.item_code
-    ''');
+    final items = await db.query(
+      'items',
+      where: 'active = 1',
+      orderBy: 'item_code ASC',
+    );
+    final rawTransactions = await db.query(
+      'transactions',
+      orderBy: 'date ASC, id ASC',
+    );
+    final grouped = <String, List<Map<String, Object?>>>{};
+    for (final row in rawTransactions) {
+      final code = '${row['item_code'] ?? ''}'.trim();
+      grouped.putIfAbsent(code, () => <Map<String, Object?>>[]).add(row);
+    }
+
+    return items.map((item) {
+      final code = '${item['item_code'] ?? ''}'.trim();
+      final rows = DbInventoryMapper.ordered(grouped[code] ?? const []);
+      final balance = InventoryEngine.closingBalance(rows);
+      return <String, Object?>{
+        'item_code': code,
+        'item_name': item['item_name'],
+        'uom': item['uom'],
+        'balance': balance,
+      };
+    }).toList();
   }
 
   static Future<int> insertTransaction({
@@ -102,11 +120,14 @@ class DatabaseService {
       if (item.isEmpty) throw ArgumentError('Unknown item: $itemCode');
 
       if (tranx == 'OUT') {
-        final rows = await txn.rawQuery('''
-          SELECT COALESCE(SUM(opening + receive - issue), 0) AS balance
-          FROM transactions WHERE item_code = ?
-        ''', [itemCode]);
-        final balance = (rows.first['balance'] as num).toDouble();
+        final raw = await txn.query(
+          'transactions',
+          where: 'item_code = ?',
+          whereArgs: [itemCode],
+          orderBy: 'date ASC, id ASC',
+        );
+        final rows = DbInventoryMapper.ordered(raw);
+        final balance = InventoryEngine.closingBalance(rows);
         if (issue > balance) {
           throw StateError('Insufficient stock: $balance available');
         }
