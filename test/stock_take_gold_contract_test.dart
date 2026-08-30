@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/stock_take_engine.dart';
+import 'package:storeph3/core/stock_take_engine.dart';
 
 const excelAug26System = <String, double>{
   '010001': 8625, '020001': 398, '020002': 353, '020003': 0,
