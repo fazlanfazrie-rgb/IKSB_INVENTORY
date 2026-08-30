@@ -7,11 +7,13 @@ import 'package:storeph3/core/transaction_engine.dart';
 import 'fixtures/tbl_db_fixture.dart';
 
 void main() {
-  test('TBL_DB fixture produces Excel-order running balances', () {
+  test('TBL_DB fixture produces Excel-order running balances per item', () {
     final rows = orderedFixture();
-    final balances = InventoryEngine.runningBalances(rows);
+    final itemA = rows.where((r) => r.itemCode == 'ITEM-A');
+    final itemB = rows.where((r) => r.itemCode == 'ITEM-B');
 
-    expect(balances, [100, 500, 550, 530, 600, 525, 495]);
+    expect(InventoryEngine.runningBalances(itemA), [100, 150, 130, 100]);
+    expect(InventoryEngine.runningBalances(itemB), [500, 600, 525]);
   });
 
   test('Balance Engine closing stock matches fixture oracle per item', () {
