@@ -92,7 +92,9 @@ class _InventoryViewState extends State<_InventoryView> {
   Widget build(BuildContext context) => FutureBuilder<List<Map<String, Object?>>>(
         future: _future,
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final rows = snapshot.data ?? const [];
           return ListView(padding: const EdgeInsets.all(16), children: [
             const Text('Inventory', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -124,11 +126,21 @@ class _TransactionViewState extends State<_TransactionView> {
   void dispose() { _item.dispose(); _qty.dispose(); _doc.dispose(); _charging.dispose(); _remark.dispose(); super.dispose(); }
   Future<void> _save() async {
     final quantity = double.tryParse(_qty.text.trim());
-    if (_item.text.trim().isEmpty || quantity == null || quantity <= 0) { setState(() => _message = 'Enter a valid item code and quantity.'); return; }
+    if (_item.text.trim().isEmpty || quantity == null || quantity <= 0) {
+      setState(() => _message = 'Enter a valid item code and quantity.');
+      return;
+    }
     try {
       await DatabaseService.insertTransaction(date: DateTime.now().toIso8601String().substring(0, 10), itemCode: _item.text.trim(), tranx: widget.type, receive: widget.type == 'IN' ? quantity : 0, issue: widget.type == 'OUT' ? quantity : 0, opening: 0, docNo: _doc.text.trim(), charging: _charging.text.trim(), remark: _remark.text.trim());
-      if (mounted) { setState(() => _message = '${widget.type == 'IN' ? 'Receive' : 'Issue'} saved successfully.'); _qty.clear(); }
-    } catch (error) { if (mounted) setState(() => _message = error.toString()); }
+      if (mounted) {
+        setState(() => _message = '${widget.type == 'IN' ? 'Receive' : 'Issue'} saved successfully.');
+        _qty.clear();
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() => _message = error.toString());
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
