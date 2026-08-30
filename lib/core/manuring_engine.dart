@@ -16,7 +16,8 @@ class ManuringResult {
     return 'PENDING';
   }
 
-  static double _round(double value) => double.parse(value.toStringAsFixed(10));
+  static double _round(double value) =>
+      double.parse(value.toStringAsFixed(10));
 }
 
 class ManuringEngine {
@@ -46,10 +47,18 @@ class ManuringEngine {
 
     var kg = 0.0;
     for (final row in rows) {
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'OUT') continue;
-      if (_text(row, const ['CHARGING', 'charging']) != charging.trim()) continue;
-      if (_text(row, const ['ITEM GROUP', 'item_group']) != fertGroup.trim()) continue;
-      if (_text(row, const ['REMARK', 'remark']) != remark.trim()) continue;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'OUT') {
+        continue;
+      }
+      if (_text(row, const ['CHARGING', 'charging']) != charging.trim()) {
+        continue;
+      }
+      if (_text(row, const ['ITEM GROUP', 'item_group']) != fertGroup.trim()) {
+        continue;
+      }
+      if (_text(row, const ['REMARK', 'remark']) != remark.trim()) {
+        continue;
+      }
       kg += _number(row['ISSUE'] ?? row['issue']);
     }
     return kg / size;
