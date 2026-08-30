@@ -38,7 +38,8 @@ class FuelEngine {
     final result = <String>[];
     final seen = <String>{};
     for (final row in rows) {
-      final reference = _text(row, const ['REFERENCE', 'reference']).toUpperCase();
+      final reference =
+          _text(row, const ['REFERENCE', 'reference']).toUpperCase();
       final charging = _text(row, const ['CHARGING', 'charging']);
       if ((reference == 'MACHINE' || reference == 'CONTRACTOR') &&
           charging.isNotEmpty &&
@@ -61,10 +62,18 @@ class FuelEngine {
     var total = 0.0;
     for (final row in rows) {
       final date = _date(row);
-      if (date == null || !_sameDate(date, target)) continue;
-      if (_text(row, const ['ITEM CODE', 'item_code']) != '010001') continue;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'OUT') continue;
-      if (_text(row, const ['CHARGING', 'charging']) != charging.trim()) continue;
+      if (date == null || !_sameDate(date, target)) {
+        continue;
+      }
+      if (_text(row, const ['ITEM CODE', 'item_code']) != '010001') {
+        continue;
+      }
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'OUT') {
+        continue;
+      }
+      if (_text(row, const ['CHARGING', 'charging']) != charging.trim()) {
+        continue;
+      }
       total += _number(row['ISSUE'] ?? row['issue']);
     }
     return total;
