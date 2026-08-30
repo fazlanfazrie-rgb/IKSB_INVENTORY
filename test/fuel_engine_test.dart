@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/fuel_engine.dart';
+import 'package:storeph3/core/fuel_engine.dart';
 
 void main() {
   test('fuel matrix normalizes 31 days and calculates total', () {
