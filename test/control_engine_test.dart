@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/control_engine.dart';
+import 'package:storeph3/core/control_engine.dart';
 
 void main() {
   test('negative balance creates high severity finding', () {
