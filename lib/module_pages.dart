@@ -93,5 +93,28 @@ class _ModuleInfo extends StatelessWidget {
   final String title;
   final String text;
   @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 12), Text(text), const SizedBox(height: 20), const LinearProgressIndicator(), const SizedBox(height: 8), Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall)]))]);
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: 12),
+                Text(text),
+                const SizedBox(height: 20),
+                const LinearProgressIndicator(),
+                const SizedBox(height: 8),
+                Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
