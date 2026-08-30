@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/manuring_engine.dart';
+import 'package:storeph3/core/manuring_engine.dart';
 
 void main() {
   test('manuring pending', () {
