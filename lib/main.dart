@@ -164,3 +164,4 @@ class _MoreView extends StatelessWidget {
         ListTile(leading: const Icon(Icons.assessment), title: const Text('Reports'), trailing: const Icon(Icons.chevron_right), onTap: () => _open(context, const ReportsPage())),
         ListTile(leading: const Icon(Icons.settings), title: const Text('Settings'), trailing: const Icon(Icons.chevron_right), onTap: () => _open(context, const SettingsPage())),
       ]);
+}
