@@ -89,7 +89,26 @@ class ReportsPage extends StatelessWidget {
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
   @override
-  Widget build(BuildContext context) => StoreModulePage(title: 'Settings', icon: Icons.settings, child: ListView(padding: const EdgeInsets.all(16), children: [Card(child: ListTile(leading: const Icon(Icons.dark_mode), title: const Text('Dark Mode'), subtitle: const Text('STOREPH3 is configured for dark mode by default.'), trailing: Switch(value: Theme.of(context).brightness == Brightness.dark, onChanged: null))), const Card(child: ListTile(leading: Icon(Icons.offline_bolt), title: Text('Offline SQLite'), subtitle: Text('Local-first database for store transactions.')))]));
+  Widget build(BuildContext context) => StoreModulePage(
+    title: 'Settings',
+    icon: Icons.settings,
+    child: ListView(padding: const EdgeInsets.all(16), children: [
+      Card(child: ListTile(leading: const Icon(Icons.dark_mode), title: const Text('Dark Mode'), subtitle: const Text('STOREPH3 is configured for dark mode by default.'), trailing: Switch(value: Theme.of(context).brightness == Brightness.dark, onChanged: null))),
+      const Card(child: ListTile(leading: Icon(Icons.offline_bolt), title: Text('Offline SQLite'), subtitle: Text('Local-first database for store transactions.'))),
+      const SizedBox(height: 12),
+      const Card(child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('NEXSTORE_360', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        SizedBox(height: 6),
+        Text('Smart Store & Estate Operations'),
+        SizedBox(height: 18),
+        Text('Created & Designed by', style: TextStyle(fontSize: 12)),
+        SizedBox(height: 4),
+        Text('FazLan_Yuns', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        SizedBox(height: 8),
+        Text('© 2026 FazLan_Yuns'),
+      ]))),
+    ]),
+  );
 }
 
 class _ModuleInfo extends StatelessWidget {
