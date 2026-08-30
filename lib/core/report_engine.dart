@@ -13,11 +13,22 @@ class ReportEngine {
       final rowCharging = '${row['CHARGING'] ?? row['charging'] ?? ''}'.trim();
       final rawDate = row['DATE'] ?? row['date'];
       final date = rawDate is DateTime ? rawDate : DateTime.tryParse('$rawDate');
-      if (itemCode != null && itemCode.isNotEmpty && rowItem != itemCode.trim()) return false;
-      if (supplier != null && supplier.isNotEmpty && rowSupplier != supplier.trim()) return false;
-      if (charging != null && charging.isNotEmpty && rowCharging != charging.trim()) return false;
-      if (from != null && (date == null || date.isBefore(from))) return false;
-      if (to != null && (date == null || date.isAfter(to))) return false;
+
+      if (itemCode != null && itemCode.isNotEmpty && rowItem != itemCode.trim()) {
+        return false;
+      }
+      if (supplier != null && supplier.isNotEmpty && rowSupplier != supplier.trim()) {
+        return false;
+      }
+      if (charging != null && charging.isNotEmpty && rowCharging != charging.trim()) {
+        return false;
+      }
+      if (from != null && (date == null || date.isBefore(from))) {
+        return false;
+      }
+      if (to != null && (date == null || date.isAfter(to))) {
+        return false;
+      }
       return true;
     }).toList();
   }
