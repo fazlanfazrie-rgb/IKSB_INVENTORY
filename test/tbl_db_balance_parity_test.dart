@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:storeph3/core/inventory_engine.dart';
 import 'package:storeph3/core/parity_harness.dart';
 import 'package:storeph3/core/stock_take_engine.dart';
+import 'package:storeph3/core/transaction_engine.dart';
 
 import 'fixtures/tbl_db_fixture.dart';
 
@@ -46,7 +47,7 @@ void main() {
   test('Stock Take ignores a negative CF when selecting the opening CF', () {
     final rows = [
       ...orderedFixture(),
-      const InventoryRow(
+      InventoryRow(
         date: DateTime(2026, 7, 31),
         itemCode: 'ITEM-A',
         type: TransactionType.cf,
