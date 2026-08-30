@@ -72,10 +72,16 @@ class ControlEngine {
     DateTime? startPeriod;
 
     for (final row in rows) {
-      if (_text(row, const ['ITEM CODE', 'item_code']) != item) continue;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') continue;
+      if (_text(row, const ['ITEM CODE', 'item_code']) != item) {
+        continue;
+      }
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') {
+        continue;
+      }
       final date = _date(row);
-      if (date == null) continue;
+      if (date == null) {
+        continue;
+      }
       if (startPeriod == null || date.isBefore(startPeriod)) {
         startPeriod = date;
       }
@@ -88,7 +94,9 @@ class ControlEngine {
 
     final hasMonthlyCf = rows.any((row) {
       if (_text(row, const ['ITEM CODE', 'item_code']) != item) return false;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') return false;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') {
+        return false;
+      }
       final date = _date(row);
       return date != null && !date.isBefore(p) && date.isBefore(next);
     });
@@ -104,7 +112,9 @@ class ControlEngine {
     DateTime? firstCf;
     for (final row in rows) {
       if (_text(row, const ['ITEM CODE', 'item_code']) != item) continue;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') continue;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') {
+        continue;
+      }
       final date = _date(row);
       if (date == null) continue;
       if (firstCf == null || date.isBefore(firstCf)) firstCf = date;
@@ -116,9 +126,13 @@ class ControlEngine {
     var opening = 0.0;
     for (final row in rows) {
       if (_text(row, const ['ITEM CODE', 'item_code']) != item) continue;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') continue;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') {
+        continue;
+      }
       final date = _date(row);
-      if (date == null || date.isBefore(start) || !date.isBefore(next)) continue;
+      if (date == null || date.isBefore(start) || !date.isBefore(next)) {
+        continue;
+      }
       opening += _number(row['OPENING'] ?? row['opening']);
     }
     return opening;
