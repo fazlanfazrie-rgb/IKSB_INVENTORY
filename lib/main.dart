@@ -86,19 +86,19 @@ class _DashboardView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        Card(
+        const Card(
           child: ListTile(
-            leading: const Icon(Icons.shield_outlined),
-            title: const Text('Offline-first database'),
-            subtitle: const Text('Transactions are stored locally in SQLite.'),
-            trailing: const Icon(Icons.check_circle_outline),
+            leading: Icon(Icons.shield_outlined),
+            title: Text('Offline-first database'),
+            subtitle: Text('Transactions are stored locally in SQLite.'),
+            trailing: Icon(Icons.check_circle_outline),
           ),
         ),
-        Card(
+        const Card(
           child: ListTile(
-            leading: const Icon(Icons.fact_check_outlined),
-            title: const Text('Inventory rules'),
-            subtitle: const Text('CF → IN → OUT • no negative issue stock'),
+            leading: Icon(Icons.fact_check_outlined),
+            title: Text('Inventory rules'),
+            subtitle: Text('CF → IN → OUT • no negative issue stock'),
           ),
         ),
       ],
@@ -161,7 +161,7 @@ class _InventoryViewState extends State<_InventoryView> {
           children: [
             const Text('Inventory', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            TextField(decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search item code or name', border: OutlineInputBorder())),
+            const TextField(decoration: InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search item code or name', border: OutlineInputBorder())),
             const SizedBox(height: 12),
             if (rows.isEmpty)
               const Card(child: Padding(padding: EdgeInsets.all(20), child: Text('No items loaded yet. Import the approved master data before live use.')))
