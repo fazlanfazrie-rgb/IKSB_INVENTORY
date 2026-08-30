@@ -12,7 +12,9 @@ class MonthEngine {
     );
     DateTime? cfDate;
     for (final row in itemRows) {
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') continue;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != 'CF') {
+        continue;
+      }
       final date = _date(row);
       if (date == null) continue;
       if (cfDate == null || date.isBefore(cfDate)) cfDate = date;
@@ -46,13 +48,15 @@ class MonthEngine {
     required Iterable<Map<String, Object?>> rows,
     required String itemCode,
     required DateTime period,
-  }) => _monthMovement(rows, itemCode, period, 'RECEIVE');
+  }) =>
+      _monthMovement(rows, itemCode, period, 'RECEIVE');
 
   static double issue({
     required Iterable<Map<String, Object?>> rows,
     required String itemCode,
     required DateTime period,
-  }) => _monthMovement(rows, itemCode, period, 'ISSUE');
+  }) =>
+      _monthMovement(rows, itemCode, period, 'ISSUE');
 
   /// Excel MONTH_CLOSING: blank when opening is blank, else opening + receive - issue.
   static double? closing({
@@ -77,7 +81,9 @@ class MonthEngine {
     final next = DateTime(p.year, p.month + 1);
     var total = 0.0;
     for (final row in rows) {
-      if (_text(row, const ['ITEM CODE', 'item_code']) != itemCode.trim()) continue;
+      if (_text(row, const ['ITEM CODE', 'item_code']) != itemCode.trim()) {
+        continue;
+      }
       final date = _date(row);
       if (date == null || date.isBefore(p) || !date.isBefore(next)) continue;
       total += _number(row[field] ?? row[field.toLowerCase()]);
