@@ -19,7 +19,7 @@ void main() {
   test('manuring over applied', () {
     final r = ManuringEngine.calculate(planned: 100, issued: 110);
     expect(r.balance, -10);
-    expect(r.progress, 110);
+    expect(r.progress, closeTo(110, 0.0000001));
     expect(r.status, 'OVER APPLIED');
   });
 }
