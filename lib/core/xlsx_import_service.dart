@@ -1,11 +1,18 @@
 import 'dart:typed_data';
 
 import 'package:excel/excel.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'database_service.dart';
 
 class XlsxImportResult {
-  const XlsxImportResult({required this.sheets, required this.items, required this.transactions, required this.errors});
+  const XlsxImportResult({
+    required this.sheets,
+    required this.items,
+    required this.transactions,
+    required this.errors,
+  });
+
   final int sheets;
   final int items;
   final int transactions;
@@ -17,7 +24,7 @@ class XlsxImportService {
 
   static double _number(Data? cell) {
     final value = cell?.value;
-    if (value is num) return value.toDouble();
+    if (value is num) return (value as num).toDouble();
     return double.tryParse('${value ?? ''}'.replaceAll(',', '')) ?? 0;
   }
 
@@ -25,12 +32,18 @@ class XlsxImportService {
     final map = <String, int>{};
     for (var i = 0; i < row.length; i++) {
       final key = _text(row[i]).toUpperCase();
-      if (key.isNotEmpty) map[key] = i;
+      if (key.isNotEmpty) {
+        map[key] = i;
+      }
     }
     return map;
   }
 
-  static String _at(List<Data?> row, Map<String, int> h, List<String> names) {
+  static String _at(
+    List<Data?> row,
+    Map<String, int> h,
+    List<String> names,
+  ) {
     for (final name in names) {
       final i = h[name];
       if (i != null && i < row.length) return _text(row[i]);
@@ -38,7 +51,11 @@ class XlsxImportService {
     return '';
   }
 
-  static double _numAt(List<Data?> row, Map<String, int> h, List<String> names) {
+  static double _numAt(
+    List<Data?> row,
+    Map<String, int> h,
+    List<String> names,
+  ) {
     for (final name in names) {
       final i = h[name];
       if (i != null && i < row.length) return _number(row[i]);
@@ -63,8 +80,15 @@ class XlsxImportService {
       final itemCol = h['ITEM CODE'];
       if (itemCol == null) continue;
 
-      final hasTransaction = h.containsKey('TRANX') || h.containsKey('TRANX TYPE') || h.containsKey('RECEIVE') || h.containsKey('ISSUE') || h.containsKey('OPENING');
-      final hasItemMaster = h.containsKey('ITEM NAME') && (h.containsKey('UOM') || h.containsKey('ITEM GROUP'));
+      final hasTransaction =
+          h.containsKey('TRANX') ||
+          h.containsKey('TRANX TYPE') ||
+          h.containsKey('RECEIVE') ||
+          h.containsKey('ISSUE') ||
+          h.containsKey('OPENING');
+      final hasItemMaster =
+          h.containsKey('ITEM NAME') &&
+          (h.containsKey('UOM') || h.containsKey('ITEM GROUP'));
 
       for (var r = 1; r < rows.length; r++) {
         final row = rows[r];
@@ -75,24 +99,37 @@ class XlsxImportService {
             final name = _at(row, h, const ['ITEM NAME']);
             final group = _at(row, h, const ['ITEM GROUP']);
             final uom = _at(row, h, const ['UOM']);
-            await db.insert('items', {
-              'item_code': code,
-              'item_name': name,
-              'item_group': group,
-              'uom': uom,
-              'active': 1,
-            }, conflictAlgorithm: ConflictAlgorithm.replace);
+            await db.insert(
+              'items',
+              {
+                'item_code': code,
+                'item_name': name,
+                'item_group': group,
+                'uom': uom,
+                'active': 1,
+              },
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
             items++;
           }
 
           if (hasTransaction) {
             final date = _at(row, h, const ['DATE']);
             if (date.isEmpty) continue;
-            var tranx = _at(row, h, const ['TRANX', 'TRANX TYPE']).toUpperCase();
+            var tranx =
+                _at(row, h, const ['TRANX', 'TRANX TYPE']).toUpperCase();
             final opening = _numAt(row, h, const ['OPENING']);
             final receive = _numAt(row, h, const ['RECEIVE']);
             final issue = _numAt(row, h, const ['ISSUE']);
-            if (tranx.isEmpty) tranx = opening != 0 ? 'CF' : receive != 0 ? 'IN' : issue != 0 ? 'OUT' : '';
+            if (tranx.isEmpty) {
+              tranx = opening != 0
+                  ? 'CF'
+                  : receive != 0
+                      ? 'IN'
+                      : issue != 0
+                          ? 'OUT'
+                          : '';
+            }
             if (!const ['CF', 'IN', 'OUT'].contains(tranx)) continue;
             await db.insert('transactions', {
               'date': date,
@@ -113,6 +150,12 @@ class XlsxImportService {
         }
       }
     }
-    return XlsxImportResult(sheets: sheets, items: items, transactions: transactions, errors: errors);
+
+    return XlsxImportResult(
+      sheets: sheets,
+      items: items,
+      transactions: transactions,
+      errors: errors,
+    );
   }
 }
