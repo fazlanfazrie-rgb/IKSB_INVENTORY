@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/fertilizer_engine.dart';
+import 'package:storeph3/core/fertilizer_engine.dart';
 
 void main() {
   final items = [
