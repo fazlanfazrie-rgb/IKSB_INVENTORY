@@ -21,24 +21,31 @@ class InventoryRow {
 }
 
 class InventoryEngine {
+  /// Calculates a running balance independently for each item code while
+  /// preserving the order of the input rows. This mirrors the Excel ledger
+  /// rule where balances are scoped to the current item, not the whole DB.
   static List<double> runningBalances(Iterable<InventoryRow> rows) {
-    var balance = 0.0;
+    final balancesByItem = <String, double>{};
     final result = <double>[];
     for (final row in rows) {
-      balance += transactionQuantity(
-        type: row.type,
-        opening: row.opening,
-        receive: row.receive,
-        issue: row.issue,
-      );
+      final previous = balancesByItem[row.itemCode] ?? 0.0;
+      final balance = previous +
+          transactionQuantity(
+            type: row.type,
+            opening: row.opening,
+            receive: row.receive,
+            issue: row.issue,
+          );
+      balancesByItem[row.itemCode] = balance;
       result.add(balance);
     }
     return result;
   }
 
   static double closingBalance(Iterable<InventoryRow> rows) {
-    final balances = runningBalances(rows);
-    return balances.isEmpty ? 0 : balances.last;
+    final list = rows.toList();
+    if (list.isEmpty) return 0;
+    return runningBalances(list).last;
   }
 
   /// Native equivalent of the Gold Excel STK_BALANCE LAMBDA.
@@ -52,10 +59,12 @@ class InventoryEngine {
     final itemRows = rows.where((r) => r.itemCode == itemCode).toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    final cfRows = itemRows.where((r) =>
-        r.type == TransactionType.cf &&
-        r.opening >= 0 &&
-        !r.date.isAfter(monthStart));
+    final cfRows = itemRows.where(
+      (r) =>
+          r.type == TransactionType.cf &&
+          r.opening >= 0 &&
+          !r.date.isAfter(monthStart),
+    );
 
     DateTime? startDate;
     double opening = 0;
@@ -64,10 +73,12 @@ class InventoryEngine {
             (a, b) => a.isAfter(b) ? a : b,
           );
       opening = itemRows
-          .where((r) =>
-              r.type == TransactionType.cf &&
-              r.opening >= 0 &&
-              _sameDate(r.date, startDate!))
+          .where(
+            (r) =>
+                r.type == TransactionType.cf &&
+                r.opening >= 0 &&
+                _sameDate(r.date, startDate!),
+          )
           .fold(0, (sum, r) => sum + r.opening);
     } else {
       final dates = itemRows
@@ -81,22 +92,28 @@ class InventoryEngine {
 
     if (startDate == null) return 0;
     final receive = itemRows
-        .where((r) =>
-            !r.date.isBefore(startDate!) && r.date.isBefore(nextPeriod))
+        .where(
+          (r) =>
+              !r.date.isBefore(startDate!) && r.date.isBefore(nextPeriod),
+        )
         .fold(0.0, (sum, r) => sum + r.receive);
     final issue = itemRows
-        .where((r) =>
-            !r.date.isBefore(startDate!) && r.date.isBefore(nextPeriod))
+        .where(
+          (r) =>
+              !r.date.isBefore(startDate!) && r.date.isBefore(nextPeriod),
+        )
         .fold(0.0, (sum, r) => sum + r.issue);
     return opening + receive - issue;
   }
 
   static double monthReceive(Iterable<InventoryRow> rows, String period) =>
-      rows.where((r) => _period(r.date) == period)
+      rows
+          .where((r) => _period(r.date) == period)
           .fold(0, (sum, r) => sum + r.receive);
 
   static double monthIssue(Iterable<InventoryRow> rows, String period) =>
-      rows.where((r) => _period(r.date) == period)
+      rows
+          .where((r) => _period(r.date) == period)
           .fold(0, (sum, r) => sum + r.issue);
 
   static bool _sameDate(DateTime a, DateTime b) =>
@@ -106,7 +123,17 @@ class InventoryEngine {
       '${_months[date.month - 1]}-${date.year.toString().substring(2)}';
 
   static const _months = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
   ];
 }
