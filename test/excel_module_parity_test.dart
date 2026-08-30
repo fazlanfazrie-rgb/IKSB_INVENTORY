@@ -109,19 +109,35 @@ void main() {
 
   test('month engine mirrors OPENING_MONTH and MONTH_CLOSING', () {
     expect(
-      MonthEngine.opening(rows: rows, itemCode: '80054', period: DateTime(2026, 8)),
+      MonthEngine.opening(
+        rows: rows,
+        itemCode: '80054',
+        period: DateTime(2026, 8),
+      ),
       10000,
     );
     expect(
-      MonthEngine.receive(rows: rows, itemCode: '80054', period: DateTime(2026, 8)),
+      MonthEngine.receive(
+        rows: rows,
+        itemCode: '80054',
+        period: DateTime(2026, 8),
+      ),
       5000,
     );
     expect(
-      MonthEngine.issue(rows: rows, itemCode: '80054', period: DateTime(2026, 8)),
+      MonthEngine.issue(
+        rows: rows,
+        itemCode: '80054',
+        period: DateTime(2026, 8),
+      ),
       3000,
     );
     expect(
-      MonthEngine.closing(rows: rows, itemCode: '80054', period: DateTime(2026, 8)),
+      MonthEngine.closing(
+        rows: rows,
+        itemCode: '80054',
+        period: DateTime(2026, 8),
+      ),
       12000,
     );
   });
@@ -165,11 +181,21 @@ void main() {
       1,
     );
     expect(
-      FertilizerWeeklyEngine.balance(opening: 10, receive: 5, issue3A: 2, issue3B: 1),
+      FertilizerWeeklyEngine.balance(
+        opening: 10,
+        receive: 5,
+        issue3A: 2,
+        issue3B: 1,
+      ),
       12,
     );
     expect(
-      FertilizerWeeklyEngine.balance(opening: 0, receive: 0, issue3A: 0, issue3B: 0),
+      FertilizerWeeklyEngine.balance(
+        opening: 0,
+        receive: 0,
+        issue3A: 0,
+        issue3B: 0,
+      ),
       '-',
     );
   });
@@ -199,7 +225,7 @@ void main() {
     expect(result.status, 'HIGH');
   });
 
-  test('report engine mirrors receive and issue row shapes', () {
+  test('report engine mirrors Excel date/code/doc ordering', () {
     final receive = ReportEngine.receive(
       rows: rows,
       period: DateTime(2026, 8),
@@ -219,7 +245,8 @@ void main() {
     expect(receive.single['RECEIVE'], 5000);
 
     expect(issue.length, 3);
-    expect(issue[0]['ITEM CODE'], '010001');
-    expect(issue[0]['ISSUE'], 60);
+    expect(issue[0]['ITEM CODE'], '80054');
+    expect(issue[1]['ITEM CODE'], '010001');
+    expect(issue[2]['ITEM CODE'], '80054');
   });
 }
