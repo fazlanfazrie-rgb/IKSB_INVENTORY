@@ -1,0 +1,18 @@
+{
+  "source": "BINCARD_STOREPH3_FINAL.xlsx",
+  "source_sha256": "0a76825a407f72b83cc16065dbbe1a49125a14c7b647e68bea9621a5cb2dbda4",
+  "period": "2026-08-01",
+  "db_rows": 1189,
+  "fertilizer_weekly_groups": 9,
+  "fertilizer_weekly_rows": 20,
+  "manuring_rows": 256,
+  "manuring_nonzero": 74,
+  "manuring_over_applied": 6,
+  "fuel_charging_count": 38,
+  "fuel_nonzero_charging": 34,
+  "fuel_high": 14,
+  "fuel_total": 14193,
+  "fuel_used_days_total": 299,
+  "oracle_method": "Gold workbook raw transaction/master data evaluated with the exact Excel named-formula semantics for FW/MNR/FUL.",
+  "excel_cache_note": "The supplied workbook has no cached formula results for these modules, and LibreOffice cannot evaluate the Excel _xlfn.LAMBDA formulas; therefore this manifest is a Gold-derived semantic oracle, not a claim of cached Excel output."
+}
