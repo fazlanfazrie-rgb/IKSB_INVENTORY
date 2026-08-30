@@ -23,8 +23,12 @@ class ReportEngine {
       if (charging != null && charging.isNotEmpty && rowCharging != charging.trim()) {
         return false;
       }
-      if (from != null && (date == null || date.isBefore(from))) return false;
-      if (to != null && (date == null || date.isAfter(to))) return false;
+      if (from != null && (date == null || date.isBefore(from))) {
+        return false;
+      }
+      if (to != null && (date == null || date.isAfter(to))) {
+        return false;
+      }
       return true;
     }).toList();
   }
@@ -59,10 +63,8 @@ class ReportEngine {
     );
   }
 
-  static double total(List<Map<String, Object?>> rows, String column) => rows.fold(
-        0,
-        (sum, row) => sum + _number(row[column]),
-      );
+  static double total(List<Map<String, Object?>> rows, String column) =>
+      rows.fold(0, (sum, row) => sum + _number(row[column]));
 
   static List<Map<String, Object?>> _transactionReport({
     required Iterable<Map<String, Object?>> rows,
@@ -83,19 +85,29 @@ class ReportEngine {
     for (final row in rows) {
       final date = _date(row);
       if (date == null || date.isBefore(p) || !date.isBefore(next)) continue;
-      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != transaction) continue;
+      if (_text(row, const ['TRANX', 'tranx']).toUpperCase() != transaction) {
+        continue;
+      }
 
       final code = _text(row, const ['ITEM CODE', 'item_code']);
       final m = master[code];
       result.add({
         'DATE': date,
         'ITEM CODE': code,
-        'ITEM NAME': m == null ? _text(row, const ['ITEM NAME', 'item_name']) : _text(m, const ['ITEM NAME', 'item_name']),
-        'ITEM GROUP': m == null ? _text(row, const ['ITEM GROUP', 'item_group']) : _text(m, const ['ITEM GROUP', 'item_group']),
-        'UOM': m == null ? _text(row, const ['UOM', 'uom']) : _text(m, const ['UOM', 'uom']),
+        'ITEM NAME': m == null
+            ? _text(row, const ['ITEM NAME', 'item_name'])
+            : _text(m, const ['ITEM NAME', 'item_name']),
+        'ITEM GROUP': m == null
+            ? _text(row, const ['ITEM GROUP', 'item_group'])
+            : _text(m, const ['ITEM GROUP', 'item_group']),
+        'UOM': m == null
+            ? _text(row, const ['UOM', 'uom'])
+            : _text(m, const ['UOM', 'uom']),
         'DOC NO': _text(row, const ['DOC NO', 'doc_no']),
         'CHARGING': _text(row, const ['CHARGING', 'charging']),
-        quantityField: _number(row[quantityField] ?? row[quantityField.toLowerCase()]),
+        quantityField: _number(
+          row[quantityField] ?? row[quantityField.toLowerCase()],
+        ),
       });
     }
 
