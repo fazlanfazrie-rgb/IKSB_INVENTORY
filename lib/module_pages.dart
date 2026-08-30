@@ -48,13 +48,9 @@ class _BinCardPageState extends State<BinCardPage> {
         FilledButton.icon(onPressed: () => setState(() => _future = _load()), icon: const Icon(Icons.refresh), label: const Text('LOAD BIN CARD')),
         const SizedBox(height: 12),
         Expanded(child: _future == null ? const Center(child: Text('Enter an item code and load the ledger.')) : FutureBuilder<List<Map<String, Object?>>>(future: _future, builder: (context, s) {
-          if (s.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          if (s.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
           final rows = s.data ?? [];
-          if (rows.isEmpty) {
-            return const Center(child: Text('No transactions found.'));
-          }
+          if (rows.isEmpty) return const Center(child: Text('No transactions found.'));
           return ListView.builder(itemCount: rows.length, itemBuilder: (_, i) { final r = rows[i]; return Card(child: ListTile(title: Text('${r['date']} • ${r['tranx']}'), subtitle: Text('DOC ${r['doc_no'] ?? ''}  Charging ${r['charging'] ?? ''}'), trailing: Text('IN ${r['receive']}\nOUT ${r['issue']}', textAlign: TextAlign.right))); });
         })),
       ]),
@@ -93,7 +89,7 @@ class SettingsPage extends StatelessWidget {
     title: 'Settings',
     icon: Icons.settings,
     child: ListView(padding: const EdgeInsets.all(16), children: [
-      Card(child: ListTile(leading: const Icon(Icons.dark_mode), title: const Text('Dark Mode'), subtitle: const Text('STOREPH3 is configured for dark mode by default.'), trailing: Switch(value: Theme.of(context).brightness == Brightness.dark, onChanged: null))),
+      Card(child: ListTile(leading: const Icon(Icons.dark_mode), title: const Text('Dark Mode'), subtitle: const Text('NEXSTORE_360 uses a luxury plantation-inspired dark theme.'), trailing: Switch(value: Theme.of(context).brightness == Brightness.dark, onChanged: null))),
       const Card(child: ListTile(leading: Icon(Icons.offline_bolt), title: Text('Offline SQLite'), subtitle: Text('Local-first database for store transactions.'))),
       const SizedBox(height: 12),
       const Card(child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -116,28 +112,5 @@ class _ModuleInfo extends StatelessWidget {
   final String title;
   final String text;
   @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.headlineSmall),
-                const SizedBox(height: 12),
-                Text(text),
-                const SizedBox(height: 20),
-                const LinearProgressIndicator(),
-                const SizedBox(height: 8),
-                Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 12), Text(text), const SizedBox(height: 20), const LinearProgressIndicator(), const SizedBox(height: 8), Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall)]))]);
 }
