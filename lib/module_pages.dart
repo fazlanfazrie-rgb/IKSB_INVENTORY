@@ -48,9 +48,13 @@ class _BinCardPageState extends State<BinCardPage> {
         FilledButton.icon(onPressed: () => setState(() => _future = _load()), icon: const Icon(Icons.refresh), label: const Text('LOAD BIN CARD')),
         const SizedBox(height: 12),
         Expanded(child: _future == null ? const Center(child: Text('Enter an item code and load the ledger.')) : FutureBuilder<List<Map<String, Object?>>>(future: _future, builder: (context, s) {
-          if (s.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
+          if (s.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final rows = s.data ?? [];
-          if (rows.isEmpty) return const Center(child: Text('No transactions found.'));
+          if (rows.isEmpty) {
+            return const Center(child: Text('No transactions found.'));
+          }
           return ListView.builder(itemCount: rows.length, itemBuilder: (_, i) { final r = rows[i]; return Card(child: ListTile(title: Text('${r['date']} • ${r['tranx']}'), subtitle: Text('DOC ${r['doc_no'] ?? ''}  Charging ${r['charging'] ?? ''}'), trailing: Text('IN ${r['receive']}\nOUT ${r['issue']}', textAlign: TextAlign.right))); });
         })),
       ]),
