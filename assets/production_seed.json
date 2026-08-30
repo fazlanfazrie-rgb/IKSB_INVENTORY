@@ -1,0 +1,16 @@
+{
+  "gold_source": "BINCARD_STOREPH3_FINAL.xlsx",
+  "version": "1.0",
+  "sheets": [
+    "01_TRANX_DB",
+    "02_TRANX_WB",
+    "13_MANURING_REPORT",
+    "15_STOCK_TAKE",
+    "16_RECEIVE_REPORT",
+    "17_ISSUE_REPORT",
+    "20_ITEM_MASTER",
+    "21_TRANX_MASTER",
+    "24_FERTILIZER_MASTER"
+  ],
+  "contract": "Native STOREPH3 must match the approved Excel business logic and golden fixtures with zero unexplained mismatches."
+}

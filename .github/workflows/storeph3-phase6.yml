@@ -1,0 +1,68 @@
+name: STOREPH3 Phase 6 Golden Gate
+
+on:
+  push:
+    branches: [main, phase6-flutter-golden]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  golden:
+    name: Flutter Golden Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android,windows --project-name storeph3 .
+      - run: rm -f test/widget_test.dart
+      - run: flutter pub get
+      - run: dart format lib test
+      - run: flutter analyze
+      - run: flutter test
+
+  android:
+    name: Android Build
+    needs: golden
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android --project-name storeph3 .
+      - run: rm -f test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: STOREPH3-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  windows:
+    name: Windows Build
+    needs: golden
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter config --enable-windows-desktop
+      - run: flutter create --platforms=windows --project-name storeph3 .
+      - run: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build windows --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: STOREPH3-windows
+          path: build/windows/x64/runner/Release/
