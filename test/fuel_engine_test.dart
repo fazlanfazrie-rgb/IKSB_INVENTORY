@@ -18,7 +18,7 @@ void main() {
     expect(result.avg, 0);
   });
 
-  test('Gold Aug-26 charging list has 38 unique machine/contractor entries', () {
+  test('Gold charging filter keeps MACHINE and CONTRACTOR only', () {
     final rows = <Map<String, Object?>>[
       {'REFERENCE': 'MACHINE', 'CHARGING': '45-SSA4701A'},
       {'REFERENCE': 'MACHINE', 'CHARGING': '45-SSA4701A'},
