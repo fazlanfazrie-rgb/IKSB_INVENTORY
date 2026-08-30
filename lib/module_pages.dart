@@ -90,9 +90,9 @@ class SettingsPage extends StatelessWidget {
     icon: Icons.settings,
     child: ListView(padding: const EdgeInsets.all(16), children: [
       Card(child: ListTile(leading: const Icon(Icons.dark_mode), title: const Text('Dark Mode'), subtitle: const Text('NEXSTORE_360 uses a luxury plantation-inspired dark theme.'), trailing: Switch(value: Theme.of(context).brightness == Brightness.dark, onChanged: null))),
-      const Card(child: ListTile(leading: Icon(Icons.offline_bolt), title: Text('Offline SQLite'), subtitle: Text('Local-first database for store transactions.'))),
+      const Card(child: ListTile(leading: const Icon(Icons.offline_bolt), title: const Text('Offline SQLite'), subtitle: const Text('Local-first database for store transactions.'))),
       const SizedBox(height: 12),
-      const Card(child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      const Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('NEXSTORE_360', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         SizedBox(height: 6),
         Text('Smart Store & Estate Operations'),
@@ -112,5 +112,5 @@ class _ModuleInfo extends StatelessWidget {
   final String title;
   final String text;
   @override
-  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 12), Text(text), const SizedBox(height: 20), const LinearProgressIndicator(), const SizedBox(height: 8), Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall)]))]);
+  Widget build(BuildContext context) => ListView(padding: const EdgeInsets.all(16), children: [Card(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(title, style: Theme.of(context).textTheme.headlineSmall), const SizedBox(height: 12), Text(text), const SizedBox(height: 20), const LinearProgressIndicator(), const SizedBox(height: 8), Text('Parity integration in progress', style: Theme.of(context).textTheme.bodySmall)])))]);
 }
