@@ -36,6 +36,8 @@ jobs:
           cache: true
       - run: flutter create --platforms=android --project-name storeph3 .
       - run: rm -f test/widget_test.dart
+      - name: Force Android compileSdk 36
+        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/' android/app/build.gradle.kts
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
