@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/date_engine.dart';
-import 'package:storeph3/core/transaction_engine.dart';
+import 'package:tranx_store/core/date_engine.dart';
+import 'package:tranx_store/core/transaction_engine.dart';
 
 void main() {
   group('Transaction engine golden rules', () {
@@ -10,33 +10,27 @@ void main() {
       expect(transactionOrder(TransactionType.outTxn), 3);
     });
 
-    test('transaction quantity preserves Excel business logic', () {
-      expect(transactionQuantity(type: TransactionType.cf, opening: 100), 100);
-      expect(transactionQuantity(type: TransactionType.inTxn, receive: 250), 250);
-      expect(transactionQuantity(type: TransactionType.outTxn, issue: 80), -80);
+    test('transaction quantities have correct signs', () {
+      expect(transactionQuantity(TransactionType.cf, 10), 10);
+      expect(transactionQuantity(TransactionType.inTxn, 10), 10);
+      expect(transactionQuantity(TransactionType.outTxn, 10), -10);
     });
 
-    test('running balance equals opening + receive - issue', () {
-      final values = <double>[
-        transactionQuantity(type: TransactionType.cf, opening: 1000),
-        transactionQuantity(type: TransactionType.inTxn, receive: 500),
-        transactionQuantity(type: TransactionType.outTxn, issue: 200),
-      ];
-      expect(runningBalance(values), 1300);
-    });
-  });
-
-  group('Date engine golden rules', () {
-    test('period uses MMM-YY', () {
-      expect(periodKey(DateTime(2026, 8, 28)), 'AUG-26');
-      expect(periodKey(DateTime(2026, 1, 1)), 'JAN-26');
+    test('running balance is deterministic', () {
+      expect(runningBalance(100, [10, -20, 5]), 95);
+      expect(runningBalance(0, [10, -5]), 5);
     });
 
-    test('week uses 1ST, 2ND, 3RD, 4TH day bands', () {
-      expect(weekKey(DateTime(2026, 8, 7)), '1ST');
-      expect(weekKey(DateTime(2026, 8, 14)), '2ND');
-      expect(weekKey(DateTime(2026, 8, 21)), '3RD');
-      expect(weekKey(DateTime(2026, 8, 28)), '4TH');
+    test('period key uses first day of month', () {
+      expect(periodKey(DateTime(2026, 8, 28)), DateTime(2026, 8, 1));
+      expect(periodKey(DateTime(2026, 1, 15)), DateTime(2026, 1, 1));
+    });
+
+    test('week key follows 1ST to 4TH rule', () {
+      expect(weekKey(DateTime(2026, 8, 1)), '1ST');
+      expect(weekKey(DateTime(2026, 8, 8)), '2ND');
+      expect(weekKey(DateTime(2026, 8, 15)), '3RD');
+      expect(weekKey(DateTime(2026, 8, 22)), '4TH');
     });
   });
 }
