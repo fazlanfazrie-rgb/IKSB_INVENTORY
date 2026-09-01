@@ -27,9 +27,3 @@ Build success means the application is technically releasable, not that all 19 E
 
 ## Release rule
 Do not publish an artifact as production-final until the current commit's required CI gates and both platform builds are green. When green, the CI artifact is the release candidate for installation/deployment.
-
-## Current lock state
-- TranX_Store plantation UI: implemented on `tranx-store-app`.
-- Final Android/Windows CI workflow: locked.
-- PR #2: release candidate branch.
-- Final CI certification: pending completion of the current GitHub Actions run.
