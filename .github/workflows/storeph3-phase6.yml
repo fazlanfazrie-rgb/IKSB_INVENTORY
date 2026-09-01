@@ -1,4 +1,4 @@
-name: TranX_Store Android Golden Build
+name: TranX_Store Final Golden Build
 
 on:
   push:
@@ -36,6 +36,10 @@ jobs:
           cache: true
       - run: flutter create --platforms=android --project-name tranx_store .
       - run: rm -f test/widget_test.dart
+      - name: Set Android app identity
+        shell: bash
+        run: |
+          sed -i 's/android:label="${applicationName}"/android:label="TranX_Store"/' android/app/src/main/AndroidManifest.xml
       - name: Force Android compileSdk 36
         shell: bash
         run: |
@@ -45,10 +49,13 @@ jobs:
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --release
+      - name: Rename final APK
+        shell: bash
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TranX_Store-v1.0.apk
       - uses: actions/upload-artifact@v4
         with:
           name: TranX_Store-android
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/TranX_Store-v1.0.apk
 
   windows:
     name: TranX_Store Windows Build
