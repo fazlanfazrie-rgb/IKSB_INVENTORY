@@ -1,0 +1,77 @@
+name: TranX_Store Golden Lock
+
+on:
+  push:
+    branches: [tranx-store-app]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Golden Gate - Flutter Analyze and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate platform files
+        run: flutter create --platforms=android,windows --project-name tranx_store .
+      - name: Remove default widget test
+        run: rm -f test/widget_test.dart
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed lib test
+      - name: Analyze
+        run: flutter analyze
+      - name: Test
+        run: flutter test
+
+  android:
+    name: Golden Gate - Android APK
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android,windows --project-name tranx_store .
+      - run: flutter pub get
+      - name: Build release APK
+        run: flutter build apk --release
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk TranX_Store-v1.0.apk
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TranX_Store-android
+          path: TranX_Store-v1.0.apk
+          if-no-files-found: error
+
+  windows:
+    name: Golden Gate - Windows Release
+    needs: verify
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android,windows --project-name tranx_store .
+      - run: flutter pub get
+      - name: Build Windows release
+        run: flutter build windows --release
+      - name: Package Windows release
+        shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath TranX_Store-windows.zip
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TranX_Store-windows
+          path: TranX_Store-windows.zip
+          if-no-files-found: error
