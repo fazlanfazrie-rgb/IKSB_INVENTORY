@@ -1,0 +1,15 @@
+TRANX_STORE V1.0 FINAL LOCK CONTRACT
+
+App runtime: Flutter + SQLite offline.
+Excel: reference/import-export only; never a runtime dependency.
+
+Golden gates:
+1. dart format --set-exit-if-changed
+2. flutter analyze
+3. flutter test
+4. flutter build apk --release + artifact TranX_Store-v1.0.apk
+5. flutter build windows --release + artifact TranX_Store-windows.zip
+
+Promotion rule: ALL gates must pass on the same commit. Partial/failed builds are rejected. The successful run becomes the Golden Build candidate.
+
+UI identity: TranX_Store / PLANTATION INVENTORY / dark plantation green + lime accent.
