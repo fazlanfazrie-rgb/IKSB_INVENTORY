@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'core/database_service.dart';
 import 'module_pages.dart';
 
-void main() => runApp(const StorePh3App());
+void main() => runApp(const TranXStoreApp());
 
-class StorePh3App extends StatelessWidget {
-  const StorePh3App({super.key});
+class TranXStoreApp extends StatelessWidget {
+  const TranXStoreApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-        title: 'STOREPH3',
+        title: 'TranX_Store',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.green),
         darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark, colorSchemeSeed: Colors.green),
@@ -30,7 +30,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('STOREPH3'), actions: const [Icon(Icons.notifications_none)]),
+        appBar: AppBar(title: const Text('TranX_Store'), actions: const [Icon(Icons.notifications_none)]),
         body: _pages[_index],
         bottomNavigationBar: NavigationBar(
           selectedIndex: _index,
@@ -52,7 +52,7 @@ class _DashboardView extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
         padding: const EdgeInsets.all(16),
         children: const [
-          Text('Dashboard', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text('TranX_Store', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           SizedBox(height: 4),
           Text('Offline inventory control'),
           SizedBox(height: 16),
@@ -92,16 +92,14 @@ class _InventoryViewState extends State<_InventoryView> {
   Widget build(BuildContext context) => FutureBuilder<List<Map<String, Object?>>>(
         future: _future,
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          if (snapshot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
           final rows = snapshot.data ?? const [];
           return ListView(padding: const EdgeInsets.all(16), children: [
             const Text('Inventory', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             const TextField(decoration: InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search item code or name', border: OutlineInputBorder())),
             const SizedBox(height: 12),
-            if (rows.isEmpty) const Card(child: Padding(padding: EdgeInsets.all(20), child: Text('No items loaded yet. Import the approved master data before live use.')))
+            if (rows.isEmpty) const Card(child: Padding(padding: EdgeInsets.all(20), child: Text('No items loaded yet. Import master data before live use.')))
             else ...rows.map((row) => ListTile(title: Text('${row['item_code']} • ${row['item_name']}'), subtitle: Text('${row['uom']}'), trailing: Text('${row['balance']}'))),
           ]);
         },
@@ -126,21 +124,11 @@ class _TransactionViewState extends State<_TransactionView> {
   void dispose() { _item.dispose(); _qty.dispose(); _doc.dispose(); _charging.dispose(); _remark.dispose(); super.dispose(); }
   Future<void> _save() async {
     final quantity = double.tryParse(_qty.text.trim());
-    if (_item.text.trim().isEmpty || quantity == null || quantity <= 0) {
-      setState(() => _message = 'Enter a valid item code and quantity.');
-      return;
-    }
+    if (_item.text.trim().isEmpty || quantity == null || quantity <= 0) { setState(() => _message = 'Enter a valid item code and quantity.'); return; }
     try {
       await DatabaseService.insertTransaction(date: DateTime.now().toIso8601String().substring(0, 10), itemCode: _item.text.trim(), tranx: widget.type, receive: widget.type == 'IN' ? quantity : 0, issue: widget.type == 'OUT' ? quantity : 0, opening: 0, docNo: _doc.text.trim(), charging: _charging.text.trim(), remark: _remark.text.trim());
-      if (mounted) {
-        setState(() => _message = '${widget.type == 'IN' ? 'Receive' : 'Issue'} saved successfully.');
-        _qty.clear();
-      }
-    } catch (error) {
-      if (mounted) {
-        setState(() => _message = error.toString());
-      }
-    }
+      if (mounted) { setState(() => _message = '${widget.type == 'IN' ? 'Receive' : 'Issue'} saved successfully.'); _qty.clear(); }
+    } catch (error) { if (mounted) setState(() => _message = error.toString()); }
   }
   @override
   Widget build(BuildContext context) {
