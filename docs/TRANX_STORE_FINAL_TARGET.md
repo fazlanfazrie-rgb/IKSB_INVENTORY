@@ -1,29 +1,22 @@
 # TranX_Store v1.0 — Final Target Lock
 
-## Product identity
-- App: TranX_Store
-- Platform: Android APK + Windows desktop
-- Storage: local SQLite, offline-first
-- Excel: reference/import/export only; never required for daily transactions
-- UI: plantation/estate dark theme
+TranX_Store is the native offline plantation inventory application target.
 
-## Mandatory release gates
-1. Flutter analyze passes with zero gate violations.
-2. Flutter tests pass.
-3. Android release APK builds successfully.
-4. Windows release build succeeds.
-5. Android artifact is named `TranX_Store-v1.0.apk`.
-6. GitHub Actions artifacts are named `TranX_Store-android` and `TranX_Store-windows`.
-7. Receive/Issue writes to SQLite and rejects invalid quantities and insufficient stock for OUT.
-8. Inventory and Bin Card read from the same transaction ledger/engine.
+- Android APK + Windows desktop
+- SQLite local-first storage
+- Plantation dark-green UI
+- Excel is reference/import/export only, never required for daily transactions
+- UI → Transaction Service → Inventory Engine → SQLite
 
-## Architecture lock
-UI → Transaction Service → Inventory Engine → SQLite.
+## Required release gates
+- Flutter analyze: PASS
+- Flutter test: PASS
+- Android release APK: PASS
+- Windows release build: PASS
+- Android artifact: `TranX_Store-v1.0.apk`
+- Android artifact group: `TranX_Store-android`
+- Windows artifact group: `TranX_Store-windows`
+- Receive/Issue validation and insufficient-stock protection
+- Inventory and Bin Card use the same native ledger/engine
 
-The UI must not implement a second balance calculation. All stock calculations must use the native engine contract.
-
-## Certification rule
-Build success means the application is technically releasable, not that all 19 Excel sheets are already parity-certified. Full Excel replacement remains a separate data/logic certification gate requiring zero unexplained golden mismatches.
-
-## Release rule
-Do not publish an artifact as production-final until the current commit's required CI gates and both platform builds are green. When green, the CI artifact is the release candidate for installation/deployment.
+Build success is technical release readiness; full 19-sheet Excel parity remains a separate certification gate requiring zero unexplained golden mismatches.
