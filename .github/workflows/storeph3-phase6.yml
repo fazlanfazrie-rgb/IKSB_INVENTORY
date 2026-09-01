@@ -1,15 +1,15 @@
-name: STOREPH3 Phase 6 Golden Gate
+name: TranX_Store Android Golden Build
 
 on:
   push:
-    branches: [main, phase6-flutter-golden]
+    branches: [main, phase6-flutter-golden, tranx-store-app]
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 jobs:
   golden:
-    name: Flutter Golden Test
+    name: Flutter Analyze and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android,windows --project-name storeph3 .
+      - run: flutter create --platforms=android,windows --project-name tranx_store .
       - run: rm -f test/widget_test.dart
       - run: flutter pub get
       - run: dart format lib test
@@ -25,7 +25,7 @@ jobs:
       - run: flutter test
 
   android:
-    name: Android Build
+    name: TranX_Store Android APK
     needs: golden
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android --project-name storeph3 .
+      - run: flutter create --platforms=android --project-name tranx_store .
       - run: rm -f test/widget_test.dart
       - name: Force Android compileSdk 36
         shell: bash
@@ -47,11 +47,11 @@ jobs:
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
-          name: STOREPH3-android
+          name: TranX_Store-android
           path: build/app/outputs/flutter-apk/app-release.apk
 
   windows:
-    name: Windows Build
+    name: TranX_Store Windows Build
     needs: golden
     runs-on: windows-latest
     steps:
@@ -61,7 +61,7 @@ jobs:
           channel: stable
           cache: true
       - run: flutter config --enable-windows-desktop
-      - run: flutter create --platforms=windows --project-name storeph3 .
+      - run: flutter create --platforms=windows --project-name tranx_store .
       - run: Remove-Item -Force -ErrorAction SilentlyContinue test/widget_test.dart
       - run: flutter pub get
       - run: flutter analyze
@@ -69,5 +69,5 @@ jobs:
       - run: flutter build windows --release
       - uses: actions/upload-artifact@v4
         with:
-          name: STOREPH3-windows
+          name: TranX_Store-windows
           path: build/windows/x64/runner/Release/
