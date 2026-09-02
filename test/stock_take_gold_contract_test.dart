@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/stock_take_engine.dart';
+import 'package:tranx_store/core/stock_take_engine.dart';
 
 const excelAug26System = <String, double>{
   '010001': 8625, '020001': 398, '020002': 353, '020003': 0,
@@ -47,10 +47,7 @@ void main() {
 
   test('August 2026 Oracle values satisfy StockTakeEngine identity', () {
     for (final entry in excelAug26System.entries) {
-      final r = StockTakeEngine.calculate(
-        system: entry.value,
-        physical: entry.value,
-      );
+      final r = StockTakeEngine.calculate(system: entry.value, physical: entry.value);
       expect(r.variance, 0, reason: entry.key);
       expect(r.status, 'TALLY', reason: entry.key);
     }
