@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/report_engine.dart';
+import 'package:tranx_store/core/report_engine.dart';
 
 void main() {
   final rows = <Map<String, Object?>>[
@@ -9,12 +9,7 @@ void main() {
   ];
 
   test('report filters by item and date', () {
-    final result = ReportEngine.filter(
-      rows: rows,
-      itemCode: 'A',
-      from: DateTime(2026, 8, 1),
-      to: DateTime(2026, 8, 2),
-    );
+    final result = ReportEngine.filter(rows: rows, itemCode: 'A', from: DateTime(2026, 8, 1), to: DateTime(2026, 8, 2));
     expect(result.length, 1);
     expect(result.first['RECEIVE'], 100);
   });
