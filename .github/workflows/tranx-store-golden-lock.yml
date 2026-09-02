@@ -41,6 +41,11 @@ jobs:
           cache: true
       - run: flutter create --platforms=android,windows --project-name tranx_store .
       - run: flutter pub get
+      - name: Force Android compileSdk 36
+        shell: bash
+        run: |
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/' android/app/build.gradle.kts
+          grep -n 'compileSdk' android/app/build.gradle.kts
       - name: Build release APK
         run: flutter build apk --release
       - name: Rename APK
@@ -62,7 +67,8 @@ jobs:
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android,windows --project-name tranx_store .
+      - run: flutter config --enable-windows-desktop
+      - run: flutter create --platforms=windows --project-name tranx_store .
       - run: flutter pub get
       - name: Build Windows release
         run: flutter build windows --release
