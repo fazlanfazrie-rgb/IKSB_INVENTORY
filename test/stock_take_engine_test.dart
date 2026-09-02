@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/stock_take_engine.dart';
+import 'package:tranx_store/core/stock_take_engine.dart';
 
 void main() {
   test('stock take parity: tally', () {
