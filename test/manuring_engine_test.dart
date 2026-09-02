@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/manuring_engine.dart';
+import 'package:tranx_store/core/manuring_engine.dart';
 
 void main() {
   test('manuring pending follows Excel MNR_PROGRESS fraction', () {
@@ -25,24 +25,10 @@ void main() {
 
   test('Gold AEX33 2nd round broadcast is completed', () {
     final rows = <Map<String, Object?>>[
-      {
-        'TRANX': 'OUT',
-        'CHARGING': 'AEX33 B/CAST',
-        'ITEM GROUP': 'NK 13.5/27.6+1B',
-        'REMARK': '2nd ROUND BROADCAST',
-        'ISSUE': 11750.0,
-      },
+      {'TRANX': 'OUT', 'CHARGING': 'AEX33 B/CAST', 'ITEM GROUP': 'NK 13.5/27.6+1B', 'REMARK': '2nd ROUND BROADCAST', 'ISSUE': 11750.0},
     ];
-    final issue = ManuringEngine.issueFromDb(
-      rows: rows,
-      charging: 'AEX33 B/CAST',
-      fertGroup: 'NK 13.5/27.6+1B',
-      remark: '2nd ROUND BROADCAST',
-      size: 50,
-      category: '3A',
-    );
+    final issue = ManuringEngine.issueFromDb(rows: rows, charging: 'AEX33 B/CAST', fertGroup: 'NK 13.5/27.6+1B', remark: '2nd ROUND BROADCAST', size: 50, category: '3A');
     expect(issue, 235.0);
-
     final result = ManuringEngine.calculate(planned: 235, issued: issue);
     expect(result.balance, 0);
     expect(result.progress, 1.0);
