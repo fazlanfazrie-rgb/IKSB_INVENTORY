@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/bin_card_engine.dart';
-import 'package:storeph3/core/inventory_engine.dart';
-import 'package:storeph3/core/transaction_engine.dart';
+import 'package:tranx_store/core/bin_card_engine.dart';
+import 'package:tranx_store/core/inventory_engine.dart';
+import 'package:tranx_store/core/transaction_engine.dart';
 
 void main() {
   test('bin card sorts same-day transactions CF -> IN -> OUT', () {
