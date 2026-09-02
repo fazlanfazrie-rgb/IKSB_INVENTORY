@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/inventory_engine.dart';
-import 'package:storeph3/core/transaction_engine.dart';
+import 'package:tranx_store/core/inventory_engine.dart';
+import 'package:tranx_store/core/transaction_engine.dart';
 
 void main() {
   test('running balance preserves CF -> IN -> OUT order', () {
