@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/fertilizer_engine.dart';
-import 'package:storeph3/core/fertilizer_weekly_engine.dart';
+import 'package:tranx_store/core/fertilizer_engine.dart';
+import 'package:tranx_store/core/fertilizer_weekly_engine.dart';
 
 void main() {
   final items = [
