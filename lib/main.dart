@@ -91,7 +91,13 @@ class _InventoryView extends StatefulWidget { const _InventoryView(); @override 
 class _InventoryViewState extends State<_InventoryView> {
   late Future<List<Map<String,Object?>>> _future;
   @override void initState(){super.initState();_future=DatabaseService.inventory();}
-  @override Widget build(BuildContext context)=>FutureBuilder<List<Map<String,Object?>>>(future:_future,builder:(context,snapshot){if(snapshot.connectionState!=ConnectionState.done)return const Center(child:CircularProgressIndicator());final rows=snapshot.data??const [];return ListView(padding:const EdgeInsets.all(16),children:[const Text('Inventory',style:TextStyle(fontSize:25,fontWeight:FontWeight.w800)),const SizedBox(height:12),const TextField(decoration:InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Search item code or name',border:OutlineInputBorder())),const SizedBox(height:12),if(rows.isEmpty)const Card(child:Padding(padding:EdgeInsets.all(20),child:Text('No items loaded yet. Import the approved master data before live use.')))else ...rows.map((r)=>Card(child:ListTile(leading:const Icon(Icons.inventory_2,color:_lime),title:Text('${r['item_code']} • ${r['item_name']}'),subtitle:Text('${r['uom']}'),trailing:Text('${r['balance']}',style:const TextStyle(fontWeight:FontWeight.bold)))))]);});
+  @override Widget build(BuildContext context)=>FutureBuilder<List<Map<String,Object?>>>(future:_future,builder:(context,snapshot){
+    if(snapshot.connectionState!=ConnectionState.done){
+      return const Center(child:CircularProgressIndicator());
+    }
+    final rows=snapshot.data??const [];
+    return ListView(padding:const EdgeInsets.all(16),children:[const Text('Inventory',style:TextStyle(fontSize:25,fontWeight:FontWeight.w800)),const SizedBox(height:12),const TextField(decoration:InputDecoration(prefixIcon:Icon(Icons.search),hintText:'Search item code or name',border:OutlineInputBorder())),const SizedBox(height:12),if(rows.isEmpty)const Card(child:Padding(padding:EdgeInsets.all(20),child:Text('No items loaded yet. Import the approved master data before live use.')))else ...rows.map((r)=>Card(child:ListTile(leading:const Icon(Icons.inventory_2,color:_lime),title:Text('${r['item_code']} • ${r['item_name']}'),subtitle:Text('${r['uom']}'),trailing:Text('${r['balance']}',style:const TextStyle(fontWeight:FontWeight.bold)))))]);
+  });
 }
 
 class _TransactionView extends StatefulWidget { const _TransactionView({required this.type}); final String type; @override State<_TransactionView> createState()=>_TransactionViewState(); }
