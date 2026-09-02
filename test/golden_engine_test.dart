@@ -11,19 +11,19 @@ void main() {
     });
 
     test('transaction quantities have correct signs', () {
-      expect(transactionQuantity(TransactionType.cf, 10), 10);
-      expect(transactionQuantity(TransactionType.inTxn, 10), 10);
-      expect(transactionQuantity(TransactionType.outTxn, 10), -10);
+      expect(transactionQuantity(type: TransactionType.cf, opening: 10), 10);
+      expect(transactionQuantity(type: TransactionType.inTxn, receive: 10), 10);
+      expect(transactionQuantity(type: TransactionType.outTxn, issue: 10), -10);
     });
 
     test('running balance is deterministic', () {
-      expect(runningBalance(100, [10, -20, 5]), 95);
-      expect(runningBalance(0, [10, -5]), 5);
+      expect(runningBalance([100, 10, -20, 5]), 95);
+      expect(runningBalance([10, -5]), 5);
     });
 
-    test('period key uses first day of month', () {
-      expect(periodKey(DateTime(2026, 8, 28)), DateTime(2026, 8, 1));
-      expect(periodKey(DateTime(2026, 1, 15)), DateTime(2026, 1, 1));
+    test('period key uses month period label', () {
+      expect(periodKey(DateTime(2026, 8, 28)), 'AUG-26');
+      expect(periodKey(DateTime(2026, 1, 15)), 'JAN-26');
     });
 
     test('week key follows 1ST to 4TH rule', () {
