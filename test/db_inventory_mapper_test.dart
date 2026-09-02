@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:storeph3/core/db_inventory_mapper.dart';
-import 'package:storeph3/core/inventory_engine.dart';
+import 'package:tranx_store/core/db_inventory_mapper.dart';
+import 'package:tranx_store/core/inventory_engine.dart';
 
 void main() {
   test('SQLite rows map and preserve Excel CF → IN → OUT order', () {
